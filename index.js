@@ -1,11 +1,15 @@
 var request = require('request'),
 	nlog = require('fly-nlog'),
+	nconf = require('fly-nconf'),
 	_ = require('lodash');
 
 var _sendData = {
 	request: 'sender data',
 	data: []
 };
+
+nconf.load(function (error) {
+});
 
 exports.push = function (data) {
 
