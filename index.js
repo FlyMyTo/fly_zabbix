@@ -18,6 +18,8 @@ exports.push = function (data) {
 
 		_.each(data, function (metric) {
 
+			var command = '';
+
 			if (_.isString(metric)) {
 
 				command = ['zabbix_sender -vv -z',
