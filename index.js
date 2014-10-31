@@ -22,13 +22,34 @@ exports.push = function (data) {
 
 		_.each(data, function (metric) {
 
-			sendData.data.push(_.extend(_metric, metric));
+			var newMetric = _.extend({}, _metric);
+
+			if (_.isString(metric)) {
+
+				newMetric.key = metric;
+				sendData.data.push(newMetric);
+
+
+			} else {
+
+				sendData.data.push(_.extend(newMetric, metric));
+
+			}
 
 		});
 
 	} else {
 
-		sendData.data.push(_.extend(_metric, data));
+		if (_.isString(data)) {
+
+			_metric.key = data;
+			sendData.data.push(_metric);
+
+		} else {
+
+			sendData.data.push(_.extend(_metric, data));
+
+		}
 
 	}
 
