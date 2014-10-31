@@ -3,12 +3,12 @@ var nlog = require('fly-nlog'),
 	exec = require('child_process').exec,
 	_ = require('lodash');
 
-nconf.load(function () {
-
-	//CONFIG.zabbix.host = 'zabbix.dev.fly.me';
-	//exports.push('3ds_authorize_declinded_by_antifrod-filter');
-
-});
+//nconf.load(function () {
+//
+//	//CONFIG.zabbix.host = 'zabbix.dev.fly.me';
+//	//exports.push('3ds_authorize_declinded_by_antifrod-filter');
+//
+//});
 
 exports.push = function (data) {
 
