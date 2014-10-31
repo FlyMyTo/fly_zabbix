@@ -1,44 +1,47 @@
-var request = require('request'),
-	nlog = require('fly-nlog'),
+var nlog = require('fly-nlog'),
 	nconf = require('fly-nconf'),
+	exec = require('child_process').exec,
 	_ = require('lodash');
 
-var _sendData = {
-	request: 'sender data',
-	data: []
-};
+nconf.load(function () {
 
-nconf.load(function (error) {
+	//CONFIG.zabbix.host = 'zabbix.dev.fly.me';
+	//exports.push('3ds_authorize_declinded_by_antifrod-filter');
+
 });
 
 exports.push = function (data) {
 
-	var url = ['http://', CONFIG.zabbix.host, ':', CONFIG.zabbix.port].join(''),
-		_metric = {};
-
-	_metric.host = CONFIG.zabbix.monitoredHost;
-	_metric.key = null;
-	_metric.value = 1;
-
-	var sendData = _.clone(_sendData, true);
+	var command = '';
 
 	if (_.isArray(data)) {
 
 		_.each(data, function (metric) {
 
-			var newMetric = _.extend({}, _metric);
-
 			if (_.isString(metric)) {
 
-				newMetric.key = metric;
-				sendData.data.push(newMetric);
-
+				command = ['zabbix_sender -vv -z',
+					CONFIG.zabbix.host,
+					'-s fmdev-e1.dev.fly.me -k',
+					metric,
+					'-o',
+					1].join(' ');
 
 			} else {
 
-				sendData.data.push(_.extend(newMetric, metric));
+				command = ['zabbix_sender -vv -z',
+					CONFIG.zabbix.host,
+					'-s fmdev-e1.dev.fly.me -k',
+					metric.key,
+					'-o',
+					metric.hasOwnProperty('value') ? metric.value : 1].join(' ');
 
 			}
+
+			exec(command, function (error, data) {
+				console.log(error);
+				console.log(data);
+			});
 
 		});
 
@@ -46,26 +49,30 @@ exports.push = function (data) {
 
 		if (_.isString(data)) {
 
-			_metric.key = data;
-			sendData.data.push(_metric);
+			command = ['zabbix_sender -vv -z',
+				CONFIG.zabbix.host,
+				'-s fmdev-e1.dev.fly.me -k',
+				data,
+				'-o',
+				1].join(' ');
 
 		} else {
 
-			sendData.data.push(_.extend(_metric, data));
+			command = ['zabbix_sender -vv -z',
+				CONFIG.zabbix.host,
+				'-s fmdev-e1.dev.fly.me -k',
+				data.key,
+				'-o',
+				data.hasOwnProperty('value') ? data.value : 1].join(' ');
 
 		}
 
+		//console.log(command);
+		exec(command, function (error) {
+			console.log(error);
+			console.log(data);
+		});
+
 	}
-
-	var post = {};
-	post.url = url;
-	post.json = sendData;
-
-	request.post(post, function (error, response, result) {
-
-		console.log(error);
-		console.log(result);
-
-	});
 
 };
