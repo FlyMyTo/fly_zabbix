@@ -24,7 +24,7 @@ exec('hostname -f', function (error, _hostname) {
 exports.push = function (data) {
 
 	exec('hostname -f', function (error, _hostname) {
-		hostname = _hostname;
+		hostname = _hostname.replace(/[\n\r]+/g, '');
 
 		var command = '';
 
