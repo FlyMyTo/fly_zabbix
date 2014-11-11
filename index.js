@@ -23,8 +23,8 @@ exec('hostname -f', function (error, _hostname) {
 
 exports.push = function (data) {
 
-	exec('hostname -f', function (error, _hostname) {
-		hostname = _hostname.replace(/[\n\r]+/g, '');
+	// exec('hostname -f', function (error, _hostname) {
+	// 	hostname = _hostname.replace(/[\n\r]+/g, '');
 
 		var command = '';
 
@@ -32,25 +32,20 @@ exports.push = function (data) {
 
 			_.each(data, function (metric) {
 
-				var command = '';
+				var command = ['zabbix_sender -vv -s',
+						hostname,
+						'-z '+CONFIG.zabbix.host+' -k',
+						metric,
+						'-o'];
+				var commandStr;
 
 				if (_.isString(metric)) {
 
-					command = ['zabbix_sender -vv -z',
-						hostname,
-						'-s fmdev-e1.dev.fly.me -k',
-						metric,
-						'-o',
-						1].join(' ');
+					commandStr = command.push(1).join(' ');
 
 				} else {
 
-					command = ['zabbix_sender -vv -z',
-						hostname,
-						'-s fmdev-e1.dev.fly.me -k',
-						metric.key,
-						'-o',
-						metric.hasOwnProperty('value') ? metric.value : 1].join(' ');
+					command = command.push(metric.hasOwnProperty('value') ? metric.value : 1).join(' ');
 
 				}
 
@@ -65,31 +60,21 @@ exports.push = function (data) {
 
 			if (_.isString(data)) {
 
-				command = ['zabbix_sender -vv -z',
-					hostname,
-					'-s fmdev-e1.dev.fly.me -k',
-					data,
-					'-o',
-					1].join(' ');
+				commandStr = command.push(1).join(' ');
 
 			} else {
 
-				command = ['zabbix_sender -vv -z',
-					hostname,
-					'-s fmdev-e1.dev.fly.me -k',
-					data.key,
-					'-o',
-					data.hasOwnProperty('value') ? data.value : 1].join(' ');
+					command = command.push(metric.hasOwnProperty('value') ? metric.value : 1).join(' ');
 
 			}
 
-			exec(command, function (error) {
+			exec(commandStr, function (error) {
 				console.log(error);
 				console.log(data);
 			});
 
 		}
 
-	});
+	// });
 
 };
