@@ -29,12 +29,12 @@ exports.push = function (data) {
 
 				command.push("-k " + metric.key);
 				command.push('-o ' + metric.hasOwnProperty('value') ? metric.value : 1);
-				
+
 			}
 
 			exec(command.join(' '), function (error, data) {
-				console.log(error);
-				console.log(data);
+				console.log('Zabbix error', error);
+				console.log('Zabbix data', data);
 			});
 		});
 
