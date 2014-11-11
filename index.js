@@ -10,6 +10,16 @@ var nlog = require('fly-nlog'),
 //
 //});
 
+var hostname = null;
+
+exec('hostname -f', function (error, _hostname) {
+	hostname = _hostname;
+	nlog.info({
+		message: 'FLY_ZABBIX:HOSTNAME',
+		hostname: _hostname
+	})
+});
+
 exports.push = function (data) {
 
 	var command = '';
@@ -23,7 +33,7 @@ exports.push = function (data) {
 			if (_.isString(metric)) {
 
 				command = ['zabbix_sender -vv -z',
-					CONFIG.zabbix.host,
+					hostname,
 					'-s fmdev-e1.dev.fly.me -k',
 					metric,
 					'-o',
@@ -32,7 +42,7 @@ exports.push = function (data) {
 			} else {
 
 				command = ['zabbix_sender -vv -z',
-					CONFIG.zabbix.host,
+					hostname,
 					'-s fmdev-e1.dev.fly.me -k',
 					metric.key,
 					'-o',
@@ -52,7 +62,7 @@ exports.push = function (data) {
 		if (_.isString(data)) {
 
 			command = ['zabbix_sender -vv -z',
-				CONFIG.zabbix.host,
+				hostname,
 				'-s fmdev-e1.dev.fly.me -k',
 				data,
 				'-o',
@@ -61,7 +71,7 @@ exports.push = function (data) {
 		} else {
 
 			command = ['zabbix_sender -vv -z',
-				CONFIG.zabbix.host,
+				hostname,
 				'-s fmdev-e1.dev.fly.me -k',
 				data.key,
 				'-o',
@@ -69,7 +79,6 @@ exports.push = function (data) {
 
 		}
 
-		//console.log(command);
 		exec(command, function (error) {
 			console.log(error);
 			console.log(data);
