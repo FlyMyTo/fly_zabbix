@@ -26,18 +26,16 @@ exports.push = function (data) {
 	// exec('hostname -f', function (error, _hostname) {
 	// 	hostname = _hostname.replace(/[\n\r]+/g, '');
 
-		var command = '';
+		var command = ['zabbix_sender -vv -s',
+				hostname,
+				'-z '+CONFIG.zabbix.host+' -k',
+				metric,
+				'-o'];
+		var commandStr;
 
 		if (_.isArray(data)) {
 
 			_.each(data, function (metric) {
-
-				var command = ['zabbix_sender -vv -s',
-						hostname,
-						'-z '+CONFIG.zabbix.host+' -k',
-						metric,
-						'-o'];
-				var commandStr;
 
 				if (_.isString(metric)) {
 
