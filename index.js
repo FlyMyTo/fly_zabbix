@@ -14,28 +14,60 @@ var hostname = null;
 
 exec('hostname -f', function (error, _hostname) {
 	hostname = _hostname;
-	nlog.info({
-		message: 'FLY_ZABBIX:HOSTNAME',
-		hostname: _hostname
-	})
+	//nlog.info({
+	//	message: 'FLY_ZABBIX:HOSTNAME',
+	//	hostname: _hostname
+	//});
 });
 
 exports.push = function (data) {
 
-	var command = '';
+	exec('hostname -f', function (error, _hostname) {
+		hostname = _hostname;
 
-	if (_.isArray(data)) {
+		var command = '';
 
-		_.each(data, function (metric) {
+		if (_.isArray(data)) {
 
-			var command = '';
+			_.each(data, function (metric) {
 
-			if (_.isString(metric)) {
+				var command = '';
+
+				if (_.isString(metric)) {
+
+					command = ['zabbix_sender -vv -z',
+						hostname,
+						'-s fmdev-e1.dev.fly.me -k',
+						metric,
+						'-o',
+						1].join(' ');
+
+				} else {
+
+					command = ['zabbix_sender -vv -z',
+						hostname,
+						'-s fmdev-e1.dev.fly.me -k',
+						metric.key,
+						'-o',
+						metric.hasOwnProperty('value') ? metric.value : 1].join(' ');
+
+				}
+
+				exec(command, function (error, data) {
+					console.log(error);
+					console.log(data);
+				});
+
+			});
+
+		} else {
+
+			if (_.isString(data)) {
 
 				command = ['zabbix_sender -vv -z',
 					hostname,
 					'-s fmdev-e1.dev.fly.me -k',
-					metric,
+					data,
 					'-o',
 					1].join(' ');
 
@@ -44,46 +76,19 @@ exports.push = function (data) {
 				command = ['zabbix_sender -vv -z',
 					hostname,
 					'-s fmdev-e1.dev.fly.me -k',
-					metric.key,
+					data.key,
 					'-o',
-					metric.hasOwnProperty('value') ? metric.value : 1].join(' ');
+					data.hasOwnProperty('value') ? data.value : 1].join(' ');
 
 			}
 
-			exec(command, function (error, data) {
+			exec(command, function (error) {
 				console.log(error);
 				console.log(data);
 			});
 
-		});
-
-	} else {
-
-		if (_.isString(data)) {
-
-			command = ['zabbix_sender -vv -z',
-				hostname,
-				'-s fmdev-e1.dev.fly.me -k',
-				data,
-				'-o',
-				1].join(' ');
-
-		} else {
-
-			command = ['zabbix_sender -vv -z',
-				hostname,
-				'-s fmdev-e1.dev.fly.me -k',
-				data.key,
-				'-o',
-				data.hasOwnProperty('value') ? data.value : 1].join(' ');
-
 		}
 
-		exec(command, function (error) {
-			console.log(error);
-			console.log(data);
-		});
-
-	}
+	});
 
 };
