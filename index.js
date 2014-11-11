@@ -13,7 +13,8 @@ var nlog = require('fly-nlog'),
 var hostname = null;
 
 exec('hostname -f', function (error, _hostname) {
-	hostname = _hostname;
+	hostname = _hostname.replace(/[\n\r]+/g, '');
+
 	//nlog.info({
 	//	message: 'FLY_ZABBIX:HOSTNAME',
 	//	hostname: _hostname
