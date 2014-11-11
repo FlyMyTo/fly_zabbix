@@ -41,11 +41,13 @@ exports.push = function (data) {
 
 				if (_.isString(metric)) {
 
-					commandStr = command.push(1).join(' ');
+					command.push(1);
+					commandStr = command.join(' ');
 
 				} else {
 
-					command = command.push(metric.hasOwnProperty('value') ? metric.value : 1).join(' ');
+					command.push(metric.hasOwnProperty('value') ? metric.value : 1);
+					command = command.join(' ');
 
 				}
 
@@ -60,11 +62,13 @@ exports.push = function (data) {
 
 			if (_.isString(data)) {
 
-				commandStr = command.push(1).join(' ');
+					command.push(1);
+					commandStr = command.join(' ');
 
 			} else {
 
-					command = command.push(metric.hasOwnProperty('value') ? metric.value : 1).join(' ');
+					command.push(metric.hasOwnProperty('value') ? metric.value : 1);
+					command = command.join(' ');
 
 			}
 
