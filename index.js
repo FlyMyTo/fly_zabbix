@@ -9,32 +9,33 @@ exec('hostname -f', function (error, _hostname) {
 
 exports.push = function (data) {
 
+	data = _.isArray(data) ? data : [data];
+
+	_.each(data, function (metric) {
+
 		var command = ['zabbix_sender -vv',
 			'-s ' + hostname,
-			'-z '+CONFIG.zabbix.host
+			'-z ' + CONFIG.zabbix.host
 		];
 
-		data = _.isArray(data) ? data : [data];
+		if (_.isString(metric)) {
 
-		_.each(data, function (metric) {
+			command.push('-k ' + metric);
+			command.push('-o ' + 1);
 
-			if (_.isString(metric)) {
+		} else {
 
-				command.push('-k ' + metric);
-				command.push('-o ' + 1);
+			command.push('-k ' + metric.key);
+			command.push('-o ' + metric.hasOwnProperty('value') ? metric.value : 1);
 
-			} else {
+		}
 
-				command.push('-k ' + metric.key);
-				command.push('-o ' + metric.hasOwnProperty('value') ? metric.value : 1);
-
-			}
-
-			exec(command.join(' '), function (error, data) {
-				console.log('Zabbix error', error);
-				console.log('Zabbix data', data);
-				console.log('Zabbix command', command);
-			});
+		command = command.join(' ');
+		exec(command, function (error, data) {
+			console.log('Zabbix error', error);
+			console.log('Zabbix data', data);
+			console.log('Zabbix command', command);
 		});
+	});
 
 };
