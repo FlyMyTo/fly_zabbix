@@ -1,6 +1,4 @@
-var nlog = require('fly-nlog'),
-	nconf = require('fly-nconf'),
-	exec = require('child_process').exec,
+var exec = require('child_process').exec,
 	_ = require('lodash');
 
 var hostname = null;
@@ -35,6 +33,7 @@ exports.push = function (data) {
 			exec(command.join(' '), function (error, data) {
 				console.log('Zabbix error', error);
 				console.log('Zabbix data', data);
+				console.log('Zabbix command', command);
 			});
 		});
 
