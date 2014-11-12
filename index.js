@@ -12,22 +12,22 @@ exec('hostname -f', function (error, _hostname) {
 exports.push = function (data) {
 
 		var command = ['zabbix_sender -vv',
-			"-s " + hostname,
-			'-z '+CONFIG.zabbix.host,
+			'-s ' + hostname,
+			'-z '+CONFIG.zabbix.host
 		];
 
-		var dataArr = _.isArray(data) ? data : [data];
+		data = _.isArray(data) ? data : [data];
 
 		_.each(data, function (metric) {
 
 			if (_.isString(metric)) {
 
-				command.push("-k " + metric);
+				command.push('-k ' + metric);
 				command.push('-o ' + 1);
 
 			} else {
 
-				command.push("-k " + metric.key);
+				command.push('-k ' + metric.key);
 				command.push('-o ' + metric.hasOwnProperty('value') ? metric.value : 1);
 
 			}
