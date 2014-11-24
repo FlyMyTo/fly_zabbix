@@ -26,7 +26,7 @@ exports.push = function (data) {
 		} else {
 
 			command.push('-k ' + metric.key);
-			command.push('-o ' + metric.hasOwnProperty('value') ? metric.value : 1);
+			command.push(('-o ' + (metric.hasOwnProperty('value') ? metric.value : 1)));
 
 		}
 
